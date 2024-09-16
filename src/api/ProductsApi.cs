@@ -18,7 +18,10 @@ namespace StoreApi.src.api
                     var product = new Product
                     {
                         Name = createProductDto.Name,
-                        Price = createProductDto.Price
+                        Price = createProductDto.Price,
+                        Description = string.IsNullOrWhiteSpace(createProductDto.Description) ? "El vendedor no ha proporcionado una descripción del producto" : createProductDto.Description,
+                        Image = string.IsNullOrWhiteSpace(createProductDto.Image) ? "/images/notdefined.webp" : createProductDto.Image,
+                        Rate = createProductDto.Rate,
                     };
                     await addProductUseCase.ExecuteAsync(product, createProductDto.CategoryIds);
                     return Results.Ok(product);
