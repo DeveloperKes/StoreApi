@@ -74,7 +74,7 @@ namespace StoreApi.src.infraestructure
         {
 
             IQueryable<Product> query = _context.Products.Include(p => p.Categories);
-            if (!string.IsNullOrWhiteSpace(name)) query = query.Where(p => p.Name.Contains(name));
+            if (!string.IsNullOrWhiteSpace(name)) query = query.Where(p => p.Name.ToLower().Contains(name.ToLower()));
             if (categoryList.Count > 0)
             {
                 query = query.Where(p => p.Categories.Any(c => categoryList.Contains(c)));
