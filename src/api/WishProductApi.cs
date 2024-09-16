@@ -24,10 +24,31 @@ namespace StoreApi.src.api
                 catch (ArgumentException ex) { return Results.BadRequest(new { message = ex.Message }); }
             });
 
-            routes.MapDelete("/api/wish/{id:int}", async (int id, WishProductRepository repository) =>
+            routes.MapDelete("/api/wish/", async (int userId, int productId, WishProductRepository repository, UserRepository userRepository, ProductRepository productRepository, DeleteWishProductUseCase deleteUseCase) =>
             {
-                await repository.DeleteWishProductAsync(id);
-                Results.NoContent();
+                var user = await userRepository.GetUserByIdAsync(userId);
+                var product = await productRepository.GetProductByIdAsync(productId);
+                if (user != null && product != null)
+                {
+                    var response = await deleteUseCase.ExecuteAsync(product, user);
+                    if (response) return Results.NoContent();
+                }
+                return Results.NotFound();
+            });
+
+            routes.MapGet("/api/wish", async (int? userId, WishProductRepository repository, UserRepository userRepository) =>
+            {
+                if (userId != null)
+                {
+                    var user = await userRepository.GetUserByIdAsync((int)userId);
+                    if (user != null)
+                    {
+                        var response = await repository.GetAllWishProductByUserAsync(user);
+                        Console.WriteLine(response.Count);
+                        return Results.Ok(response);
+                    }
+                }
+                return Results.NotFound();
             });
         }
     }

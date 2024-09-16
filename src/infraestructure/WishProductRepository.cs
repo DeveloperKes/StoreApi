@@ -22,13 +22,22 @@ namespace StoreApi.src.infraestructure
             .FirstOrDefaultAsync(w => w.Id == id);
         }
 
-        public async Task<List<WishProduct>> GetAllWishProductByUseAsync(User user)
+        public async Task<List<WishProduct>> GetAllWishProductByUserAsync(User user)
         {
             return await _context.WishProducts
             .Include(u => u.User)
             .Include(p => p.Product)
-            .Where(u => u.User == user)
+            .Where(u => u.User.Id == user.Id)
             .ToListAsync();
+        }
+        public async Task<WishProduct?> FindOneByAsync(User user, Product product)
+        {
+            return await _context.WishProducts
+            .Include(u => u.User)
+            .Include(p => p.Product)
+            .Where(u => u.User.Id == user.Id)
+            .Where(p => p.Product.Id == product.Id)
+            .FirstOrDefaultAsync();
         }
 
         public async Task DeleteWishProductAsync(int id)

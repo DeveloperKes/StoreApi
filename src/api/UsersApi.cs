@@ -23,7 +23,7 @@ namespace StoreApi.src.api
                 try
                 {
                     var response = await loginUserUseCase.ExecuteAsync(loginUserDTO);
-                    if (response == null) { return Results.Forbid(); }
+                    if (response == null) { return Results.BadRequest(new { message = "No se ha podido autenticar al usuario" }); }
                     else { return Results.Ok(response); }
                 }
                 catch (ArgumentException ex) { return Results.BadRequest(new { message = ex.Message }); }

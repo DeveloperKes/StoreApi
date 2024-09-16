@@ -16,7 +16,9 @@ namespace StoreApi.src.application
             var user = await _userRepository.GetUserByUsernameAsync(loginUserDTO.Username);
             if (user != null)
             {
-                if (user.Password != loginUserDTO.Password) Results.Forbid();
+                if (user.Password != loginUserDTO.Password) return null;
+                user.LastLogin = DateTime.UtcNow;
+                await _userRepository.UpdateUserAsync(user);
                 var person = await _personRepository.GetPersonByUserAsync(user);
                 if (person != null)
                 {

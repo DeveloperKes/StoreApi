@@ -7,7 +7,7 @@ namespace StoreApi.src.domain
     {
         public int Id { get; set; }
         public required string Name { get; set; }
-        public string Image { get; set; } = "/public/images/notdefined.webp";
+        public string Image { get; set; } = "/images/notdefined.webp";
         public decimal Price { get; set; }
         public string Description { get; set; } = "El vendedor no ha proporcionado una descripción del producto";
         public decimal Rate { get; set; } = 0;

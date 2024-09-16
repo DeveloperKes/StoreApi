@@ -29,9 +29,9 @@ namespace StoreApi.src.api
                 }
             });
 
-            routes.MapGet("/api/products", async (ProductRepository repository) =>
+            routes.MapGet("/api/products", async (int? userId, ProductRepository repository) =>
             {
-                var products = await repository.GetAllProductsAsync();
+                var products = await repository.GetAllProductsAsync(userId);
                 return Results.Ok(products);
             });
 

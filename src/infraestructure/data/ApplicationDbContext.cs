@@ -19,7 +19,7 @@ namespace StoreApi.src.infraestructure.data
                 .HasMany(p => p.Categories)
                 .WithMany(c => c.Products)
                 .UsingEntity<Dictionary<string, object>>(
-                    "CategoryProduct", // Nombre de la tabla intermedia
+                    "CategoryProduct",
                     j => j.HasOne<Category>().WithMany().HasForeignKey("CategoriesId"),
                     j => j.HasOne<Product>().WithMany().HasForeignKey("ProductsId"));
 

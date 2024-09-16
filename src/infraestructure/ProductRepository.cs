@@ -1,6 +1,7 @@
 
 
 using Microsoft.EntityFrameworkCore;
+using StoreApi.src.application.DTOs;
 using StoreApi.src.domain;
 using StoreApi.src.infraestructure.data;
 
@@ -23,11 +24,34 @@ namespace StoreApi.src.infraestructure
                 .FirstOrDefaultAsync(p => p.Id == id);
         }
 
-        public async Task<List<Product>> GetAllProductsAsync()
+        public async Task<List<ProductDTO>> GetAllProductsAsync(int? userId)
         {
-            return await _context.Products
-            .Include(p => p.Categories)
-            .ToListAsync();
+
+            var result = await _context.Products
+                .GroupJoin(
+                _context.WishProducts.Where(w => w.User.Id == userId),
+                product => product.Id,
+                wishProduct => wishProduct.Product.Id,
+                (product, wishProducts) => new
+                {
+                    Product = product,
+                    IsFavorite = wishProducts.Any()
+                }
+                ).Select(p => new ProductDTO
+                {
+                    Id = p.Product.Id,
+                    Name = p.Product.Name,
+                    IsFavorite = p.IsFavorite,
+                    Description = p.Product.Description,
+                    Price = p.Product.Price,
+                    Image = p.Product.Image,
+                    Categories = p.Product.Categories.ToList(),
+                    Rate = p.Product.Rate
+
+                })
+                .ToListAsync();
+
+            return result;
         }
 
         public async Task UpdateProductAsync(Product product)
@@ -50,7 +74,6 @@ namespace StoreApi.src.infraestructure
         {
 
             IQueryable<Product> query = _context.Products.Include(p => p.Categories);
-            Console.WriteLine($"Este es el name: {name}");
             if (!string.IsNullOrWhiteSpace(name)) query = query.Where(p => p.Name.Contains(name));
             if (categoryList.Count > 0)
             {

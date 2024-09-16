@@ -8,22 +8,33 @@ namespace StoreApi.src.application
     {
         private readonly WishProductRepository _wishProductRepository = wishProductRepository;
 
-        public async Task<WishProductResponseDTO> ExecuteAsync(Product product, User user)
+        public async Task<WishProductResponseDTO?> ExecuteAsync(Product product, User user)
         {
-            var wishProduct = new WishProduct
+            var wishOld = await _wishProductRepository.FindOneByAsync(user, product);
+            if (wishOld == null)
             {
-                Product = product,
-                User = user,
-                DateAdd = DateTime.UtcNow
-            };
+                var wishProduct = new WishProduct
+                {
+                    Product = product,
+                    User = user,
+                    DateAdd = DateTime.UtcNow
+                };
 
-            await _wishProductRepository.AddWishProduct(wishProduct);
-            return new WishProductResponseDTO
-            {
-                Product = product,
-                DateAdd = wishProduct.DateAdd,
-                Id = wishProduct.Id
-            };
+                await _wishProductRepository.AddWishProduct(wishProduct);
+                return new WishProductResponseDTO
+                {
+                    Product = product,
+                    DateAdd = wishProduct.DateAdd,
+                    Id = wishProduct.Id
+                };
+            }
+            else
+                return new WishProductResponseDTO
+                {
+                    Product = wishOld.Product,
+                    Id = wishOld.Id,
+                    DateAdd = wishOld.DateAdd
+                };
         }
     }
 }
