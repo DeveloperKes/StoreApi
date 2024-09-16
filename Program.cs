@@ -3,11 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using StoreApi.src.infraestructure;
 using StoreApi.src.application;
 using StoreApi.src.api;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.Extensions.Options;
-using System.Security.Claims;
-using System.Text.Encodings.Web;
-using Microsoft.Extensions.Internal;
 
 var builder = WebApplication.CreateBuilder(args);
 
